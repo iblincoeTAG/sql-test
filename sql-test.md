@@ -92,7 +92,7 @@ Write a query to retrieve the average, minimum, and maximum value of the `value`
 <br/>
 
 ## Question 3:
-Write q query to retrieve everything from `table_1` as well as a new column, `new_var`, which is the `value` variable minus the `value` of the row with the lowest `record_id` for the category. The result should look like this:  
+Write a query to retrieve everything from `table_1` as well as a new column, `new_var`, which is the `value` variable minus the `value` of the row with the lowest `record_id` for the category. The result should look like this:  
 | `category` | `record_id` | `value` | `new_var` |
 | :-: | :-: | :-: | :-: |
 | A | 1 | 0.01 | 0.00 |
