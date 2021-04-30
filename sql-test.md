@@ -24,7 +24,7 @@ Can you find the `level` and tenure of each person (in # of months, assume curre
 | :-: | :-: | :-: |
 | Alice | 1 | 372 |
 | Bob | 2 | 135|
-| Cameron | 3 | 0 |  
+| Cameron | 3 | 12 |  
 
 <br/>  
 
