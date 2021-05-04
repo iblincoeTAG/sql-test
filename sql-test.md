@@ -65,7 +65,7 @@ All of the following questions will be based on a table that looks like this:
 And here is a definition of the table in `SQL`:  
 ```sql
 with 
-	table1 as (
+	table_1 as (
 		select 
 		    'A' as category, 
 		    1 as record_id,
@@ -80,7 +80,7 @@ with
 		select 'B', 7, 0.87
 		)
 select * 
-from table1;
+from table_1;
 ```  
 
 
