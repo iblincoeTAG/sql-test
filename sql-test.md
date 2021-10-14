@@ -82,13 +82,21 @@ with
 select * 
 from table_1;
 ```  
-
+Ans1:<br/>
+select t1.name, t2.level, TIMESTAMPDIFF( month,  t1.hire_date  ,cast('2021-04-30' as date)) Tenure<br/>
+from table_1 t1 <br/>
+left join table_2 t2 on REPLACE(t1.position,'.','')=REPLACE(t2.position,'.','');
 
 <br/>
 
 ## Question 2:
 Write a query to retrieve the average, minimum, and maximum value of the `value` column for each `category` value. We will not provide the expected output for this question. 
 
+
+Ans2:<br/>
+select category, Avg(value) Avg_value, min(value) Min_Value, max(value) Max_Value<br/>
+from table_1<br/>
+group by category;
 <br/>
 
 ## Question 3:
@@ -105,7 +113,10 @@ Write a query to retrieve everything from `table_1` as well as a new column, `ne
 | B | 6 | 0.93 | -0.07 | 
 | B | 7 | 0.87 | -0.13 |  
 
-
+<br/>
+Ans3:<br/>
+select *, (value - FIRST_VALUE (value) OVER(partition by category order by record_id asc)) new_var <br/>
+from table_1
 <br/>
 
 ## Question 4
@@ -117,6 +128,12 @@ Write a query that sums up all of the numbers from each `category` splitting out
 | B | odd | 1.62 |
 | B | even | 1.93 |
 
+
+<br/>
+Ans4:<br/>
+select category, case when record_id%2=0 then 'Even' else 'Odd' End record_id_type, sum(value) value_sum<br/>
+from table_1<br/>
+group by category, case when record_id%2=0 then 'Even' else 'Odd' End
 
 <br/>
 
@@ -152,3 +169,51 @@ select 5 union all
 select 6 union all
 select 7
 ```
+<br/>
+Ans5:<br/>
+Option 1 if on old version of SQL<br/> 
+<br/>
+	with <br/>
+recordids as (select 1 as record_id union all<br/>
+select 2 union all<br/>
+select 3 union all<br/>
+select 4 union all<br/>
+select 5 union all<br/>
+select 6 union all<br/>
+select 7),
+
+
+lists as (select distinct category, recordids.record_id<br/>
+from table_1 cross join recordids)<br/>
+
+select category, record_id, case when value is null <br/>
+then coalesce(max(value) over ( partition by block order by record_id ),LEAD(value) over ( partition by category order by record_id ) ) else value end value2 <br/>
+
+from (<br/>
+select l.*, t.value, sum(case when t.value is not null then 1 else 0 end) over(partition by l.category  order by l.category, record_id) block<br/>
+from<br/>
+lists l left join table_1 t on l.category = t.category and l.record_id = t.record_id<br/>
+order by category, record_id<br/>
+) a order by  category, record_id<br/>
+<br/><br/>
+
+Option 2: if using new version of SQL<br/> 
+with <br/>
+recordids as (select 1 as record_id union all<br/>
+select 2 union all<br/>
+select 3 union all<br/>
+select 4 union all<br/>
+select 5 union all<br/>
+select 6 union all<br/>
+select 7),<br/>
+
+lists as (select distinct category, recordids.record_id<br/>
+from table_1 cross join recordids)<br/>
+
+
+select l.*, case when t.value is null then <br/>
+coalesce ( LAG (t.value) IGNORE NULLS over(partition by l.category  order by  record_id), LEAD (t.value) IGNORE NULLS over(partition by l.category  order by  record_id) )<br/>
+else t.value end Value<br/>
+from<br/>
+lists l left join table_1 t on l.category = t.category and l.record_id = t.record_id<br/>
+order by category, record_id<br/>
